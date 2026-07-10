@@ -1,6 +1,7 @@
 services:
   - type: web
     name: agentic-quickapp-backend
+    plan: free
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
