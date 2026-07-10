@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: agentic-quickapp-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    envVars:
+      - key: ALLOWED_ORIGINS
+        sync: false
+
+  - type: web
+    name: agentic-quickapp-frontend
+    runtime: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
