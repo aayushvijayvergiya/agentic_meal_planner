@@ -1,8 +1,8 @@
 FROM node:20-slim AS build
 
 WORKDIR /app
-COPY package.json ./
-RUN npm install
+COPY package.json package-lock.json ./
+RUN npm ci
 COPY . .
 
 ARG VITE_API_URL=http://localhost:8000
