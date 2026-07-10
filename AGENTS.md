@@ -30,3 +30,14 @@ Read `docs/PROBLEM_STATEMENT.md`. If its sections are still empty template comme
 - Backend routes live in `backend/app/main.py`; config lives in `backend/app/config.py` and is read from `.env` via `pydantic-settings`. Follow this pattern when adding new routes/settings rather than introducing a new config mechanism.
 - Frontend API base URL comes from `VITE_API_URL` (see `frontend/.env.example`), read via `import.meta.env`. Reuse this pattern for any other frontend-configurable values.
 - Tests live next to what they test: `backend/tests/` mirrors `backend/app/`; frontend test files sit beside their component (`App.test.tsx` next to `App.tsx`).
+
+## Database (optional)
+
+`backend/app/db.py` and `backend/app/models.py` provide an optional SQLAlchemy/SQLite pattern — engine, session factory, and one example model (`Item`). It is **not wired into the running app**: `main.py` does not import it, and no routes use it yet.
+
+If a problem statement calls for persistence:
+1. Import `get_db` from `app.db` and use it as a route dependency: `def route(db: Session = Depends(get_db))`.
+2. Import `Base`/models and call `Base.metadata.create_all(bind=engine)` once at startup (e.g. in `main.py`) to create tables.
+3. Extend or replace the `Item` example model in `backend/app/models.py` with real domain models.
+
+**Persistence caveat:** the SQLite file lives at `backend/data/app.db` and does not survive container restarts or Render redeploys unless a Docker volume / Render persistent disk is added — that's a separate, later decision, not handled by this template.

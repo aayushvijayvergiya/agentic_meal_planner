@@ -15,6 +15,9 @@ frontend/vite.config.d.ts
 # Env
 .env
 
+# SQLite (optional persistence pattern, backend/app/db.py)
+backend/data/
+
 # OS
 .DS_Store
 
