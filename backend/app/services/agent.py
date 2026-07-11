@@ -104,43 +104,43 @@ async def chat_with_agent(messages: List[Dict[str, Any]]) -> PlannerResponse:
     
     current_messages = [system_prompt] + messages
 
-    response = await client.chat.completions.create(
-        model=REQUESTED_MODEL,
-        messages=current_messages,
-        tools=tools,
-        tool_choice="auto",
-        temperature=0.7,
-        max_tokens=4000
-    )
-    
-    response_message = response.choices[0].message
-
-    # Handle tool calls if any
-    if response_message.tool_calls:
-        current_messages.append(response_message) # Add assistant's tool call message
-        
-        for tool_call in response_message.tool_calls:
-            if tool_call.function.name == "duckduckgo_search_prices":
-                args = json.loads(tool_call.function.arguments)
-                result = await duckduckgo_search_prices(args.get("query", ""))
-                current_messages.append({
-                    "role": "tool",
-                    "tool_call_id": tool_call.id,
-                    "name": tool_call.function.name,
-                    "content": result
-                })
-        
-        # Second call to get the final JSON
-        final_response = await client.chat.completions.create(
+    max_iterations = 5
+    for _ in range(max_iterations):
+        response = await client.chat.completions.create(
             model=REQUESTED_MODEL,
             messages=current_messages,
-            response_format={"type": "json_object"},
+            tools=tools,
+            tool_choice="auto",
             temperature=0.7,
             max_tokens=4000
         )
-        content = final_response.choices[0].message.content
+        
+        response_message = response.choices[0].message
+
+        if response_message.tool_calls:
+            current_messages.append(response_message)
+            for tool_call in response_message.tool_calls:
+                if tool_call.function.name == "duckduckgo_search_prices":
+                    try:
+                        args = json.loads(tool_call.function.arguments)
+                        result = await duckduckgo_search_prices(args.get("query", ""))
+                    except Exception as e:
+                        result = f"Error executing tool: {e}"
+                    
+                    current_messages.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "name": tool_call.function.name,
+                        "content": result
+                    })
+            # loop continues to next iteration to let model process tool output
+        else:
+            # No more tool calls, we have our final content
+            content = response_message.content
+            break
     else:
-        content = response_message.content
+        # If we hit max iterations
+        content = response_message.content or "{}"
 
     try:
         # Groq might wrap the json in markdown blocks, let's strip it if present
