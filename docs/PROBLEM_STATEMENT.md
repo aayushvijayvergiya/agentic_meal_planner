@@ -4,7 +4,7 @@
 
 ## Goal, Scope & Success Criteria
 
-<!-- What should the agent do? Who uses it? What's explicitly out of scope? How will you know it's working? -->
+<!-- What should the solution do? Who uses it? What's explicitly out of scope? How will you know it's working? -->
 
 ## Architecture Preferences/Constraints
 
