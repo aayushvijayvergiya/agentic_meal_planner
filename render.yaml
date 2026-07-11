@@ -9,6 +9,8 @@ services:
     envVars:
       - key: ALLOWED_ORIGINS
         sync: false
+      - key: GROQ_API_KEY
+        sync: false
 
   - type: web
     name: agentic-quickapp-frontend
