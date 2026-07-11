@@ -41,9 +41,8 @@ client = AsyncOpenAI(
     api_key=settings.groq_api_key or "DUMMY_KEY",
     base_url="https://api.groq.com/openai/v1"
 )
-MODEL_NAME = "llama3-70b-8192"  # Using Groq's standard model alias if gpt-oss-120b is just a placeholder, but will use what was requested.
-# The problem statement specifically asked for openai/gpt-oss-120b but Groq doesn't host that. We'll use the requested name and it will pass it to Groq.
-REQUESTED_MODEL = "llama3-70b-8192" 
+MODEL_NAME = "openai/gpt-oss-120b"
+REQUESTED_MODEL = "openai/gpt-oss-120b" 
 
 
 from duckduckgo_search import DDGS
