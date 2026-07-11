@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
+from app.routers import planner
 
 app = FastAPI(title="Agentic Quickapp Backend")
 
@@ -13,6 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(planner.router)
 
 @app.get("/health")
 def health() -> dict[str, str]:
